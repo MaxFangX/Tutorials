@@ -2,7 +2,8 @@ from django.shortcuts import render
 # Might be able to delete the line above
 
 from django.http import HttpResponse
-from polls.models import question
+from django.template import RequestContext, loader
+from polls.models import Question
 
 def index(request):
     latest_question_list = Question.objects.order_by('-pub_date')[:5]
