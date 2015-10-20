@@ -1,4 +1,4 @@
-from rest_framework import status
+from rest_framework import generics, mixins, status
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
 
@@ -6,22 +6,17 @@ from snippets.models import Snippet
 from snippets.serializers import SnippetSerializer
 
 
-@api_view(['GET', 'POST'])
-def snippet_list(request, format=None):
-    """
-    List all code snippets, or create a new snippet.
-    """
-    if request.method == 'GET':
-        snippets = Snippet.objects.all()
-        serializer = SnippetSerializer(snippets, many=True)
-        return Response(serializer.data)
+class SnippetList(mixins.ListModelMixin,
+                  mixins.CreateModelMixin,
+                  generics.GenericAPIView):
+    queryset = Snippet.objects.all()
+    serializer_class = SnippetSerializer
 
-    elif request.method == 'POST':
-        serializer = SnippetSerializer(data=request.data)
-        if serializer.is_valid():
-            serializer.save()
-            return Response(serializer.data, status=status.HTTP_201_CREATED)
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+    def get(self, request, *args, **kwargs):
+        return self.list(request, *args, **kwargs)
+
+    def post(self, request, *args, **kwargs):
+        return self.create(request, *args, **kwargs)
 
 
 @api_view(['GET', 'PUT', 'DELETE'])
