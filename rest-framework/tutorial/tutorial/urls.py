@@ -1,3 +1,8 @@
+from django.conf.urls import include, url
+from django.contrib import admin
+from rest_framework.routers import DefaultRouter
+from snippets import views
+
 """tutorial URL Configuration
 
 The `urlpatterns` list routes URLs to views. For more information please see:
@@ -13,10 +18,15 @@ Including another URLconf
     1. Add an import:  from blog import urls as blog_urls
     2. Add a URL to urlpatterns:  url(r'^blog/', include(blog_urls))
 """
-from django.conf.urls import include, url
-from django.contrib import admin
+
+
+router = DefaultRouter()
+router.register(r'snippets', views.SnippetViewSet)
+router.register(r'users', views.UserViewSet)
+
 
 urlpatterns = [
-    url(r'^', include('snippets.urls')),
+    url(r'^', include(router.urls)),
+    url(r'^api-auth/', include('rest_framework.urls', namespace='rest_framework')),
     url(r'^admin/', include(admin.site.urls)),
 ]
